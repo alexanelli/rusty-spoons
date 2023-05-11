@@ -2,73 +2,16 @@ use std::rc::Rc;
 use yew::prelude::*;
 
 /// reducer's Action
-enum CounterAction {
+enum GameAction {
   Double,
   Square,
+  UpgradeClicks,
+  UpgradeSpeed,
+  Click,
 }
 
 /// reducer's State
-struct CounterState {
-  counter: i32,
-}
-
-impl Default for CounterState {
-  fn default() -> Self {
-    Self { counter: 1 }
-  }
-}
-
-impl Reducible for CounterState {
-  /// Reducer Action Type
-  type Action = CounterAction;
-
-  /// Reducer Function
-  fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
-    let next_ctr = match action {
-      CounterAction::Double => self.counter * 2,
-      CounterAction::Square => self.counter.pow(2),
-    };
-
-    Self { counter: next_ctr }.into()
-  }
-}
-
-#[derive(Properties, PartialEq)]
-pub struct Props {
-  pub name: AttrValue,
-}
-
-#[function_component]
-pub fn GameBoard(props: &Props) -> Html {
-
-  // The use_reducer hook takes an initialization function which will be called only once.
-  let counter = use_reducer(CounterState::default);
-
-  let double_onclick = {
-      let counter = counter.clone();
-      Callback::from(move |_| counter.dispatch(CounterAction::Double))
-  };
-  let square_onclick = {
-      let counter = counter.clone();
-      Callback::from(move |_| counter.dispatch(CounterAction::Square))
-  };
-
-  html! {
-      <>
-          <div> {props.name.clone()} </div>
-          <div id="result">{ counter.counter }</div>
-
-          <button onclick={double_onclick}>{ "Double" }</button>
-          <button onclick={square_onclick}>{ "Square" }</button>
-      </>
-  }
-}
-
-
-
-
-#[derive(Clone, Debug, PartialEq, Copy)]
-pub struct Game {
+struct GameState {
   //Increment this by one every click
   pub clicks: i32,
   //autmoatically click this many times per second
@@ -84,6 +27,115 @@ pub struct Game {
   //clicks per physical click
   pub click_increment: i32,
 }
+
+impl Default for GameState {
+  fn default() -> Self {
+    Self { 
+      auto_clicks: 0,
+      cost: 1,
+      upgrade_speed: 0,
+      click_rate: 1000,
+      click_increment: 1,
+      interval_auto: 1,
+      clicks: 0
+    }
+  }
+}
+
+impl Reducible for GameState {
+  /// Reducer Action Type
+  type Action = GameAction;
+
+  /// Reducer Function
+  fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
+    match action {
+      GameAction::Double =>{
+        Self { clicks: self.clicks * 2, ..*self }.into()
+      },
+      GameAction::Square => {
+        Self { clicks: self.clicks.pow(2), ..*self }.into()
+      },
+      GameAction::Click => {
+        Self { clicks: self.clicks + 1, ..*self }.into()
+      },
+      GameAction::UpgradeClicks => {
+        Self { click_increment: self.click_increment + 1, ..*self }.into()
+      },
+      GameAction::UpgradeSpeed => {
+        Self { click_rate: self.click_rate + 1, ..*self }.into()
+      },
+    }
+  }
+}
+
+#[derive(Properties, PartialEq)]
+pub struct Props {
+  pub name: AttrValue,
+}
+
+#[function_component]
+pub fn GameBoard(props: &Props) -> Html {
+
+  // The use_reducer hook takes an initialization function which will be called only once.
+  let game = use_reducer(GameState::default);
+
+  let double_onclick = {
+    let game = game.clone();
+    Callback::from(move |_| game.dispatch(GameAction::Double))
+  };
+  let square_onclick = {
+    let game = game.clone();
+    Callback::from(move |_| game.dispatch(GameAction::Square))
+  };
+  let click_onclick = {
+    let game = game.clone();
+    Callback::from(move |_| game.dispatch(GameAction::Click))
+  };
+  let upgrade_clicks_onclick = {
+    let game = game.clone();
+    Callback::from(move |_| game.dispatch(GameAction::UpgradeClicks))
+  };
+  let upgrade_speed_onclick = {
+    let game = game.clone();
+    Callback::from(move |_| game.dispatch(GameAction::UpgradeSpeed))
+  };
+
+  html! {
+    <>
+      <div> {props.name.clone()} </div>
+      <div id="result">{ game.clicks }</div>
+
+      <button onclick={double_onclick}>{ "Double" }</button>
+      <button onclick={square_onclick}>{ "Square" }</button>
+      <button onclick={click_onclick}>{ "Click" }</button>
+      <div>{ "click power: "}{game.click_increment}</div>
+      <button onclick={upgrade_clicks_onclick}>{ "Upgrade Clicks" }</button>
+      <div>{ "auto click rate: "}{game.click_rate}</div>
+      <button onclick={upgrade_speed_onclick}>{ "Upgrade Speed" }</button>
+    </>
+  }
+}
+
+
+
+
+// #[derive(Clone, Debug, PartialEq, Copy)]
+// pub struct Game {
+//   //Increment this by one every click
+//   pub clicks: i32,
+//   //autmoatically click this many times per second
+//   pub auto_clicks: i32,
+//   //cost of the upgrades, increases exponentially
+//   pub cost: i32,
+//   //level of the speed up upgrade
+//   pub upgrade_speed: i32,
+//   //ms between each autoclick
+//   pub click_rate: i32,
+//   //storing interval here so we can update it
+//   pub interval_auto: i32,
+//   //clicks per physical click
+//   pub click_increment: i32,
+// }
 
 // impl Game {
 

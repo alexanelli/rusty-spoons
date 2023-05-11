@@ -8,15 +8,6 @@ use crate::game::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
-  let mut game = Game{
-    clicks: 0,
-    auto_clicks: 0,
-    cost: 1,
-    upgrade_speed: 0,
-    click_rate: 1000,
-    click_increment: 1,
-    interval_auto: 1,
-  };
 
   html!{
     <>
