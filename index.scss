@@ -6,10 +6,9 @@ body {
 
 body {
   align-items: center;
-  display: flex;
   justify-content: center;
 
-  background: linear-gradient(to bottom right, #444444, #009a5b);
+  background: linear-gradient(to bottom right, #444444, #89918e);
   font-size: 1.5rem;
 }
 
@@ -23,13 +22,18 @@ main {
   height: 20em;
 }
 
-.heart:after {
-  content: "❤️";
-
-  font-size: 1.75em;
-}
-
 h1 + .subtitle {
   display: block;
   margin-top: -1em;
+}
+
+.grid {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  gap: 10px;
+}
+
+.btn-success, .btn-danger {
+  color: orange;
 }

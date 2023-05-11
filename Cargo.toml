@@ -1,14 +1,19 @@
 [package]
-name = "trunk-template"
+name = "rusty-spoons"
 version = "0.1.0"
 edition = "2021"
-description = "Template for starting a Yew project using Trunk"
+description = "rust wasm incremental"
 readme = "README.md"
-repository = "https://github.com/yewstack/yew-trunk-minimal-template"
-license = "MIT OR Apache-2.0"
+repository = "https://github.com/alexanelli/rusty-spoons"
+license = "MIT"
 keywords = ["yew", "trunk"]
 categories = ["gui", "wasm", "web-programming"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
+async-std = "1.12.0"
+gloo-console = "0.2.3"
+gloo-storage = "0.2.2"
+wasm-bindgen-futures = "0.4.35"
+web-sys = "0.3.62"
 yew = { version="0.20", features=["csr"] }
